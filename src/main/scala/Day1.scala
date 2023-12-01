@@ -1,17 +1,17 @@
 package net.mosur
 
-import scala.util.matching.Regex
-import scala.util.Try
-
 object Day1 extends App {
 
   extension (str: String) {
-    def extractInt: String = {
-      extractIntMatch(str).getOrElse(str.substring(0, str.length - 1).extractInt)
+    private def extractPrefixNumber: String = {
+      extractPrefixNumberRec(str, 1)
     }
   }
+  private def extractPrefixNumberRec(str: String, size: Int = 1): String = {
+    parseNumber(str.substring(0, size)) getOrElse extractPrefixNumberRec(str, size + 1)
+  }
 
-  def extractIntMatch(str: String): Option[String] = {
+  private def parseNumber(str: String): Option[String] = {
     str match
       case "one" | "1" => Some("1")
       case "two" | "2" => Some("2")
@@ -32,10 +32,9 @@ object Day1 extends App {
     }
     val result = lines.map { it =>
         val matches = regex.findAllIn(it).matchData.map(_.start).toList
-        val first = matches.head
-        val last = matches.last
-        val text = it + "XXXXX"
-        text.substring(first, first + 5).extractInt + text.substring(last, last + 5).extractInt
+        val firstMatchIndex = matches.head
+        val lastMatchIndex = matches.last
+        it.substring(firstMatchIndex).extractPrefixNumber + it.substring(lastMatchIndex).extractPrefixNumber
       }
       .map(_.toInt)
       .sum
@@ -46,9 +45,11 @@ object Day1 extends App {
   println("Part 1:")
   execute(readLines("day1-small.txt"), 142, Part.One)
   execute(readLines("day1.txt"), 54331, Part.One)
+
   println("Part 2:")
   execute(readLines("day1-small-2.txt"), 281, Part.Two)
-  execute(readLines("day1.txt"), 54533, Part.Two)
+  execute(readLines("day1.txt"), 54518, Part.Two)
+
 
   println("Tests section:")
   execute(List("five"), 55, Part.Two)
@@ -57,5 +58,4 @@ object Day1 extends App {
   execute(List("a61fivea"), 65, Part.Two)
   execute(List("sixonefive"), 65, Part.Two)
   execute(List("eightwo"), 82, Part.Two)
-
 }
