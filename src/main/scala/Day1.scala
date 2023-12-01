@@ -43,28 +43,19 @@ object Day1 extends App {
     println(s"$part Result is $result. Expected result is: $expected ")
   }
 
-  //  //part1
-  //  execute(readLines("day1-small.txt"), 142, Part.One)
-  //  execute(readLines("day1.txt"), 54331, Part.One)
-  //  //
-  //  //  //part2
-    execute(readLines("day1-small-2.txt"), 281, Part.Two)
-    execute(readLines("day1.txt"), 54533, Part.Two)
-  //
-  //  //54533 is wrong - too high
-  //
-  //  //tests
-  //  execute(List("five"), 55, Part.Two)
-  //  execute(List("afivea"), 55, Part.Two)
-  //  execute(List("a6fivea"), 65, Part.Two)
-  //  execute(List("a61fivea"), 65, Part.Two)
-  //  execute(List("sixonefive"), 65, Part.Two)
-  private val eightwo = "eightwo"
-  execute(List(eightwo), 82, Part.Two)
+  println("Part 1:")
+  execute(readLines("day1-small.txt"), 142, Part.One)
+  execute(readLines("day1.txt"), 54331, Part.One)
+  println("Part 2:")
+  execute(readLines("day1-small-2.txt"), 281, Part.Two)
+  execute(readLines("day1.txt"), 54533, Part.Two)
 
-  val regex = "(?=(\\d|one|two|three|four|five|six|seven|eight|nine))".r
-  regex.findAllIn(eightwo).matchData.map(_.start).map { start =>
-      (eightwo + "zzzzz").substring(start, start + 5).extractInt
-    }
-    .foreach(println(_))
+  println("Tests section:")
+  execute(List("five"), 55, Part.Two)
+  execute(List("afivea"), 55, Part.Two)
+  execute(List("a6fivea"), 65, Part.Two)
+  execute(List("a61fivea"), 65, Part.Two)
+  execute(List("sixonefive"), 65, Part.Two)
+  execute(List("eightwo"), 82, Part.Two)
+
 }
