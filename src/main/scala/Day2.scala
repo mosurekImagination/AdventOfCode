@@ -9,8 +9,8 @@ object Day2 extends App {
         .map(_.split(",")
           .map(_.trim)
           .map { pick =>
-            val count = pick.split(" ")
-            count.last -> count.head.toInt
+            val countAndColour = pick.split(" ")
+            countAndColour.last -> countAndColour.head.toInt
           }
         )
     )
@@ -19,33 +19,34 @@ object Day2 extends App {
       "green" -> 13,
       "blue" -> 14
     )
+    val minCubes = Map(
+      "red" -> 0,
+      "green" -> 0,
+      "blue" -> 0
+    )
 
     val result =
       part match
         case Part.One => games
           .zipWithIndex
-          .filterNot { (g) =>
-            g._1.exists { game =>
-              game.exists { round =>
-                round._2 > availableCubes(round._1)
+          .filterNot { (g, _) =>
+            g.exists { game =>
+              game.exists { (color, count) =>
+                count > availableCubes(color)
               }
             }
           }
           .map(_._2 + 1)
           .sum
         case Part.Two => games.map { game =>
-          var minCubes = Map(
-            "red" -> 0,
-            "green" -> 0,
-            "blue" -> 0
-          )
-          game.foreach { round =>
-            round.foreach { colorAndCount =>
-              if (colorAndCount._2 > minCubes(colorAndCount._1))
-                minCubes = minCubes.updated(colorAndCount._1, colorAndCount._2)
+          game.foldLeft(minCubes) { (minCubes, round) =>
+            round.foldLeft(minCubes) { (minCubes, colorAndCount) =>
+              val (color, count) = colorAndCount
+              if (count > minCubes(color))
+                minCubes.updated(color, count)
+              else minCubes
             }
-          }
-          minCubes.values.product
+          }.values.product
         }.sum
 
 
@@ -58,5 +59,5 @@ object Day2 extends App {
 
   println("Part 2:")
   execute(readLines("day2-small.txt"), 2286, Part.Two)
-  execute(readLines("day2.txt"), 0, Part.Two)
+  execute(readLines("day2.txt"), 72596, Part.Two)
 }
