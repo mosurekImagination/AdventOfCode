@@ -2,15 +2,6 @@ package net.mosur
 
 object Day1 extends App {
 
-  extension (str: String) {
-    private def extractPrefixNumber: String = {
-      extractPrefixNumberRec(str, 1)
-    }
-  }
-  private def extractPrefixNumberRec(str: String, size: Int = 1): String = {
-    parseNumber(str.substring(0, size)) getOrElse extractPrefixNumberRec(str, size + 1)
-  }
-
   private def parseNumber(str: String): Option[String] = {
     str match
       case "one" | "1" => Some("1")
@@ -24,17 +15,19 @@ object Day1 extends App {
       case "nine" | "9" => Some("9")
       case _ => None
   }
+
   val execute: (List[String], Int, Part) => Unit = { (lines, expected, part) =>
     val regex = part match {
       case Part.One => "\\d".r
       case Part.Two => "(?=(\\d|one|two|three|four|five|six|seven|eight|nine))".r
     }
     val result = lines.map { it =>
-        val matches = regex.findAllIn(it).matchData.map(_.start).toList
-        val firstMatchIndex = matches.head
-        val lastMatchIndex = matches.last
-        it.substring(firstMatchIndex).extractPrefixNumber + it.substring(lastMatchIndex).extractPrefixNumber
-      }
+      val matches = regex.findAllIn(it).matchData.map(_.start).toList
+      val firstMatchIndex = matches.head
+      val lastMatchIndex = matches.last
+      val digits = """\d|one|two|three|four|five|six|seven|eight|nine""".r
+      parseNumber(digits.findPrefixOf(it.substring(firstMatchIndex)).get).get + parseNumber(digits.findPrefixOf(it.substring(lastMatchIndex)).get).get
+    }
       .map(_.toInt)
       .sum
 
