@@ -24,7 +24,6 @@ object Day1 extends App {
       case "nine" | "9" => Some("9")
       case _ => None
   }
-
   val execute: (List[String], Int, Part) => Unit = { (lines, expected, part) =>
     val regex = part match {
       case Part.One => "\\d".r
