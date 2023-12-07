@@ -24,24 +24,31 @@ object Day7 extends App {
 
   val types = List(FiveOfAKind, FourOfAKind, FullHouse, ThreeOfAKind, TwoPair, Pair, HighCard)
 
-  def getCharValue(value: Int): Char = ('@' + value).toChar
+  def cardValueAsChar(value: Int): Char = ('@' + value).toChar
 
-  val charValues = (1 to 9).map(i => i.toString.head -> getCharValue(i)).toMap ++
+  val cardToCharValue = (1 to 9).map(i => i.toString.head -> cardValueAsChar(i)).toMap ++
     Map(
-      'T' -> getCharValue(10),
-      'J' -> getCharValue(11),
-      'Q' -> getCharValue(12),
-      'K' -> getCharValue(13),
-      'A' -> getCharValue(14)
+      'T' -> cardValueAsChar(10),
+      'J' -> cardValueAsChar(11),
+      'Q' -> cardValueAsChar(12),
+      'K' -> cardValueAsChar(13),
+      'A' -> cardValueAsChar(14)
     )
 
-  val extractType: String => Type = sortedCards => types.find(_.regex.findFirstIn(sortedCards).isDefined).get
+  val cardToCharValue2 = cardToCharValue.updated('J', cardValueAsChar(0))
 
+  val extractType: String => Type = cards => types.find(_.regex.findFirstIn(cards.sorted).isDefined).get
+
+  val extractMaximumJokerType: String => Type = card => cardToCharValue.keys.map(
+    key => card.replaceAll("J", key.toString)
+  ).map(extractType(_)).maxBy(_.value)
 
   val execute: (List[String], Long, Part) => Unit = { (lines, expected, part) =>
     val sorted = lines.map { line =>
       val s"$cards $bid" = line
-      Hand(cards, cards.sorted, bid.toInt, extractType(cards.sorted), cards.map(charValues(_)))
+      part match
+        case Part.One => Hand(cards, cards.sorted, bid.toInt, extractType(cards), cards.map(cardToCharValue(_)))
+        case Part.Two => Hand(cards, cards.sorted, bid.toInt, extractMaximumJokerType(cards), cards.map(cardToCharValue2(_)))
     }.sortWith((a, b) =>
       if (a.handType.value == b.handType.value)
         a.cardOrderValue < b.cardOrderValue
@@ -50,20 +57,17 @@ object Day7 extends App {
 
     val result = sorted
       .zipWithIndex
-      .map((card, index) =>
-        card.bid.toLong * (index + 1)
-      ).sum
+      .map((card, index) => card.bid.toLong * (index + 1))
+      .sum
     println(s"$part Result is $result. Expected result is: $expected ")
   }
-
-  //247070026 too low
-  //253930474 too low
   time {
     println("Part 1:")
     execute(readLines("day7-small.txt"), 6440, Part.One)
     execute(readLines("day7.txt"), 253954294, Part.One)
+
     println("Part 2:")
     execute(readLines("day7-small.txt"), 5905, Part.Two)
-    execute(readLines("day7.txt"), 20048741, Part.Two)
+    execute(readLines("day7.txt"), 254837398, Part.Two)
   }
 }
