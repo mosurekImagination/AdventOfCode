@@ -47,18 +47,22 @@ def part1Short(file):
     firstColumn, secondColumn = sorted(input[0::2]), sorted(input[1::2])
     return sum(map(lambda a, b: abs(a - b), firstColumn, secondColumn))
 
+
 def part2Short(file):
     input = list(map(lambda x: int(x), file.read().split()))
     firstColumn, secondColumn = sorted(input[0::2]), sorted(input[1::2])
     return sum(map(lambda a: a * secondColumn.count(a), firstColumn))
 
+
 def part1Numpy(file):
     firstColumn, secondColumn = np.sort(np.loadtxt(file).T)
     return sum(abs(firstColumn - secondColumn))
 
+
 def part2Numpy(file):
     firstColumn, secondColumn = np.loadtxt(file).T
-    return sum(a * sum(a==secondColumn) for a in firstColumn)
+    return sum(a * sum(a == secondColumn) for a in firstColumn)
 
-solve( 11, 2756096, part1, part1Short, part1Numpy)
-solve( 31, 23117829, part2, part2Short, part2Numpy)
+
+solve(11, 2756096, part1, part1Short, part1Numpy)
+solve(31, 23117829, part2, part2Short, part2Numpy)
